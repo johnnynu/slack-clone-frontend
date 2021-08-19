@@ -18,5 +18,10 @@ module.exports = {
     'no-confusing-arrow': 0,
     'implicit-arrow-linebreak': 0,
     'object-curly-newline': 0,
+    'react/state-in-constructor': 0,
+    'no-unused-state': 0,
+    'no-unused-vars': 0,
+    'react/destructuring-assignment': 0,
+    'react/prop-types': 0,
   },
 };
