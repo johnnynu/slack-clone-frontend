@@ -23,5 +23,6 @@ module.exports = {
     'no-unused-vars': 0,
     'react/destructuring-assignment': 0,
     'react/prop-types': 0,
+    'comma-dangle': 0,
   },
 };
