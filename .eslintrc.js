@@ -25,4 +25,8 @@ module.exports = {
     'react/prop-types': 0,
     'comma-dangle': 0,
   },
+  parser: 'babel-eslint',
+  env: {
+    browser: 1,
+  },
 };
