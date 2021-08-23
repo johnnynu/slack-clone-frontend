@@ -24,6 +24,9 @@ module.exports = {
     'react/destructuring-assignment': 0,
     'react/prop-types': 0,
     'comma-dangle': 0,
+    'function-paren-newline': 0,
+    'no-unneeded-ternary': 0,
+    'arrow-body-style': 0,
   },
   parser: 'babel-eslint',
   env: {
