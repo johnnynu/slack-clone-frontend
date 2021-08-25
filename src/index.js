@@ -35,7 +35,6 @@ const middlewareLink = setContext((_, { headers }) => {
 // afterwareLink not posting headers into response headers
 const afterwareLink = new ApolloLink((operation, forward) => {
   return forward(operation).map((response) => {
-    console.log(response);
     const {
       response: { headers },
     } = operation.getContext();
