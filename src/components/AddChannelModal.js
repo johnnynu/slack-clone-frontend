@@ -3,7 +3,8 @@ import { Button, Form, Modal, Input } from 'semantic-ui-react';
 import { withFormik } from 'formik';
 import { gql } from '@apollo/client';
 import { graphql } from '@apollo/client/react/hoc';
-import { flowRight as compose } from 'lodash';
+import { flowRight as compose, findIndex } from 'lodash';
+import { allTeamsQuery } from '../graphql/Team';
 
 function AddChannelModal({
   open,
@@ -50,7 +51,13 @@ function AddChannelModal({
 
 const createChannelMutation = gql`
   mutation ($teamId: Int!, $name: String!) {
-    createChannel(teamId: $teamId, name: $name)
+    createChannel(teamId: $teamId, name: $name) {
+      success
+      channel {
+        id
+        name
+      }
+    }
   }
 `;
 
@@ -62,7 +69,21 @@ export default compose(
       values,
       { props: { onClose, teamId, mutate }, setSubmitting }
     ) => {
-      await mutate({ variables: { teamId, name: values.name } });
+      await mutate({
+        variables: { teamId, name: values.name },
+        optimisticResponse: {
+          createChannel: {
+            __typename: 'Mutation',
+            success: true,
+            channel: {
+              __typename: 'Channel',
+              id: -1,
+              name: values.name,
+            },
+          },
+        },
+        refetchQueries: [{ query: allTeamsQuery }],
+      });
       onClose();
       setSubmitting(false);
     },

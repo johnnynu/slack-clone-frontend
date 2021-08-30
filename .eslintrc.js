@@ -30,6 +30,7 @@ module.exports = {
     'jsx-props-no-spreading': 0,
     'react/jsx-props-no-spreading': 'off',
     'object-curly-newline': 'off',
+    'import/prefer-default-export': 0,
   },
   parser: 'babel-eslint',
   env: {
