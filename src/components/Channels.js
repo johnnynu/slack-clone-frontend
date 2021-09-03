@@ -61,9 +61,9 @@ export default ({
   teamName,
   username,
   channels,
-  teamId,
   users,
   onAddChannelClick,
+  teamId,
 }) => (
   <ChannelWrapper>
     <PushLeft>

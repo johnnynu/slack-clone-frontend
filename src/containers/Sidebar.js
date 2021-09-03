@@ -21,8 +21,7 @@ class Sidebar extends React.Component {
 
   render() {
     const { teams, team } = this.props;
-    console.log(teams);
-    console.log(team);
+    console.log(team.channels);
 
     let username = '';
 

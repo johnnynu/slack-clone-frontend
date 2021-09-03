@@ -1,6 +1,6 @@
 import React from 'react';
 import { graphql } from '@apollo/client/react/hoc';
-import _ from 'lodash';
+import findIndex from 'lodash/findIndex';
 
 import AppLayout from '../components/AppLayout';
 import Messages from '../components/Messages';
@@ -19,13 +19,13 @@ const ViewTeam = ({
     return null;
   }
 
-  const teamIdx = !!teamId
-    ? _.findIndex(allTeams, ['id', parseInt(teamId, 10)])
+  const teamIdx = teamId
+    ? findIndex(allTeams, ['id', parseInt(teamId, 10)])
     : 0;
   const currentTeam = allTeams[teamIdx];
 
   const channelIdx = channelId
-    ? _.findIndex(currentTeam.channels, ['id', parseInt(channelId, 10)])
+    ? findIndex(currentTeam.channels, ['id', parseInt(channelId, 10)])
     : 0;
   const currentChannel = currentTeam.channels[channelIdx];
 
