@@ -1,12 +1,10 @@
 import React from 'react';
-import { graphql } from '@apollo/client/react/hoc';
 import _ from 'lodash';
 import decode from 'jwt-decode';
 
 import Channels from '../components/Channels';
 import Teams from '../components/Teams';
 import AddChannelModal from '../components/AddChannelModal';
-import { allTeamsQuery } from '../graphql/Team';
 
 class Sidebar extends React.Component {
   state = {
@@ -22,18 +20,9 @@ class Sidebar extends React.Component {
   };
 
   render() {
-    const {
-      data: { loading, allTeams },
-      currentTeamId,
-    } = this.props;
-    if (loading) {
-      return null;
-    }
-
-    const teamIdx = currentTeamId
-      ? _.findIndex(allTeams, ['id', currentTeamId])
-      : 0;
-    const currentTeam = allTeams[teamIdx];
+    const { teams, team } = this.props;
+    console.log(teams);
+    console.log(team);
 
     let username = '';
 
@@ -45,20 +34,15 @@ class Sidebar extends React.Component {
       console.log(error);
     }
 
-    return loading ? null : (
+    return (
       <>
-        <Teams
-          teams={allTeams.map((team) => ({
-            id: team.id,
-            letter: team.name.charAt(0).toUpperCase(),
-          }))}
-        />
+        <Teams teams={teams} />
 
         <Channels
-          teamName={currentTeam.name}
+          teamName={team.name}
           username={username}
-          teamId={currentTeam.id}
-          channels={currentTeam.channels}
+          teamId={team.id}
+          channels={team.channels}
           users={[
             { id: 1, name: 'slackbot' },
             { id: 2, name: 'nonuser' },
@@ -66,7 +50,7 @@ class Sidebar extends React.Component {
           onAddChannelClick={this.handleAddChannelClick}
         />
         <AddChannelModal
-          teamId={currentTeam.id}
+          teamId={team.id}
           open={this.state.openAddChannelModal}
           onClose={this.handleCloseAddChannelModal}
         />
@@ -75,4 +59,4 @@ class Sidebar extends React.Component {
   }
 }
 
-export default graphql(allTeamsQuery)(Sidebar);
+export default Sidebar;
