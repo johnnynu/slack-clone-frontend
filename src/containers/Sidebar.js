@@ -5,10 +5,12 @@ import decode from 'jwt-decode';
 import Channels from '../components/Channels';
 import Teams from '../components/Teams';
 import AddChannelModal from '../components/AddChannelModal';
+import InviteModal from '../components/InviteModal';
 
 class Sidebar extends React.Component {
   state = {
     openAddChannelModal: false,
+    openInviteModal: false,
   };
 
   handleCloseAddChannelModal = () => {
@@ -19,9 +21,17 @@ class Sidebar extends React.Component {
     this.setState({ openAddChannelModal: true });
   };
 
+  handleInviteClick = () => {
+    this.setState({ openInviteModal: true });
+  };
+
+  handleCloseInviteModal = () => {
+    this.setState({ openInviteModal: false });
+  };
+
   render() {
     const { teams, team } = this.props;
-    console.log(team.channels);
+    const { openInviteModal, openAddChannelModal } = this.state;
 
     let username = '';
 
@@ -36,7 +46,6 @@ class Sidebar extends React.Component {
     return (
       <>
         <Teams teams={teams} />
-
         <Channels
           teamName={team.name}
           username={username}
@@ -47,11 +56,18 @@ class Sidebar extends React.Component {
             { id: 2, name: 'nonuser' },
           ]}
           onAddChannelClick={this.handleAddChannelClick}
+          onInvitePeopleClick={this.handleInviteClick}
         />
         <AddChannelModal
           teamId={team.id}
-          open={this.state.openAddChannelModal}
+          open={openAddChannelModal}
           onClose={this.handleCloseAddChannelModal}
+        />
+        ,
+        <InviteModal
+          teamId={team.id}
+          open={openInviteModal}
+          onClose={this.handleCloseInviteModal}
         />
       </>
     );
