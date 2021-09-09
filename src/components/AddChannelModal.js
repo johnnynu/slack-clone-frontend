@@ -3,7 +3,7 @@ import { Button, Form, Modal, Input } from 'semantic-ui-react';
 import { withFormik } from 'formik';
 import { gql } from '@apollo/client';
 import { graphql } from '@apollo/client/react/hoc';
-import { flowRight as compose, findIndex } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import { allTeamsQuery } from '../graphql/Team';
 
 function AddChannelModal({
