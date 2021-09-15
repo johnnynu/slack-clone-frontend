@@ -6,10 +6,12 @@ import {
   ApolloProvider,
   createHttpLink,
   ApolloLink,
+  split,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { WebSocketLink } from '@apollo/client/link/ws';
 
-// import { setContext } from 'apollo-link-context';
 import Routes from './routes';
 
 import 'semantic-ui-css/semantic.min.css';
@@ -54,7 +56,28 @@ const afterwareLink = new ApolloLink((operation, forward) => {
   });
 });
 
-const link = afterwareLink.concat(middlewareLink.concat(httpLink));
+const httpLinkWithMiddleware = afterwareLink.concat(
+  middlewareLink.concat(httpLink)
+);
+
+const wsLink = new WebSocketLink({
+  uri: 'ws://localhost:4000/graphql',
+  options: {
+    reconnect: true,
+  },
+});
+
+const link = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLinkWithMiddleware
+);
 
 const client = new ApolloClient({
   link,
