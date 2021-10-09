@@ -38,7 +38,7 @@ class Login extends React.Component {
     if (success) {
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
-      this.props.history.push('/view-team');
+      this.props.history.push('/');
     } else {
       const err = {};
       errors.forEach(({ path, message }) => {

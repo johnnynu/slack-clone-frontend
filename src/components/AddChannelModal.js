@@ -4,7 +4,7 @@ import { withFormik } from 'formik';
 import { gql } from '@apollo/client';
 import { graphql } from '@apollo/client/react/hoc';
 import { flowRight as compose } from 'lodash';
-import { allTeamsQuery } from '../graphql/Team';
+import { getUserQuery } from '../graphql/Team';
 
 function AddChannelModal({
   open,
@@ -82,7 +82,7 @@ export default compose(
             },
           },
         },
-        refetchQueries: [{ query: allTeamsQuery }],
+        refetchQueries: [{ query: getUserQuery }],
       });
       onClose();
       setSubmitting(false);
