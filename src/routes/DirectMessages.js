@@ -13,10 +13,9 @@ import MessageContainer from '../containers/MessageContainer';
 import { getUserQuery } from '../graphql/Team';
 
 const ViewTeam = ({
-  mutate,
   data: { loading, getUser },
   match: {
-    params: { teamId, channelId },
+    params: { teamId, userId },
   },
 }) => {
   if (loading) {
@@ -34,15 +33,6 @@ const ViewTeam = ({
   const teamIdx = teamIdInt ? findIndex(teams, ['id', teamIdInt]) : 0;
   const currentTeam = teamIdx === -1 ? teams[0] : teams[teamIdx];
 
-  const channelIdInt = parseInt(channelId, 10);
-  const channelIdx = channelIdInt
-    ? findIndex(currentTeam.channels, ['id', channelIdInt])
-    : 0;
-  const currentChannel =
-    channelIdx === -1
-      ? currentTeam.channels[0]
-      : currentTeam.channels[channelIdx];
-
   return (
     <AppLayout>
       <Sidebar
@@ -53,18 +43,11 @@ const ViewTeam = ({
         team={currentTeam}
         username={username}
       />
-      {currentChannel && <Header channelName={currentChannel.name} />}
-      {currentChannel && <MessageContainer channelId={currentChannel.id} />}
-      {currentChannel && (
-        <SendMessage
-          placeholder={currentChannel.name}
-          onSubmit={async (text) => {
-            await mutate({ variables: { text, channelId: currentChannel.id } });
-          }}
-        >
-          <input type="text" placeholder="send a message!" />
-        </SendMessage>
-      )}
+      {/* <Header channelName={currentChannel.name} />
+      <MessageContainer channelId={currentChannel.id} /> */}
+      <SendMessage onSubmit={() => {}} placeholder={userId}>
+        <input type="text" placeholder="send a message!" />
+      </SendMessage>
     </AppLayout>
   );
 };

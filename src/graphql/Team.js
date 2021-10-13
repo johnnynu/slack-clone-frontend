@@ -9,6 +9,7 @@ export const getUserQuery = gql`
       teams {
         id
         name
+        admin
         channels {
           id
           name
