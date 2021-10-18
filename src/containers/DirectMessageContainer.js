@@ -1,0 +1,110 @@
+import React from 'react';
+import { gql } from '@apollo/client';
+import { graphql } from '@apollo/client/react/hoc';
+import { Comment } from 'semantic-ui-react';
+import Messages from '../components/Messages';
+
+// const newChannelMessageSubscription = gql`
+//   subscription ($channelId: Int!) {
+//     newChannelMessage(channelId: $channelId) {
+//       id
+//       text
+//       user {
+//         username
+//       }
+//       createdAt
+//     }
+//   }
+// `;
+
+// eslint-disable-next-line react/prefer-stateless-function
+class DirectMessageContainer extends React.Component {
+  /* eslint camelcase: ["error", {allow: ["UNSAFE_componentWillMount"]}] */
+
+  //   UNSAFE_componentWillMount() {
+  //     this.unsubscribe = this.subscribe(this.props.channelId);
+  //   }
+
+  //   componentWillReceiveProps({ channelId }) {
+  //     if (this.props.channelId !== channelId) {
+  //       if (this.unsubscribe) {
+  //         this.unsubscribe();
+  //       }
+  //       this.unsubscribe = this.subscribe(channelId);
+  //     }
+  //   }
+
+  //   componentWillUnmount() {
+  //     if (this.unsubscribe) {
+  //       this.unsubscribe();
+  //     }
+  //   }
+
+  //   subscribe = (channelId) => {
+  //     this.props.data.subscribeToMore({
+  //       document: newChannelMessageSubscription,
+  //       variables: { channelId },
+  //       updateQuery: (prev, { subscriptionData }) => {
+  //         if (!subscriptionData.data) return prev;
+  //         return {
+  //           ...prev,
+  //           allMessages: [
+  //             ...prev.allMessages,
+  //             subscriptionData.data.newChannelMessage,
+  //           ],
+  //         };
+  //       },
+  //     });
+  //   };
+
+  render() {
+    const {
+      data: { loading, directMessages },
+    } = this.props;
+    console.log(directMessages);
+    return loading ? null : (
+      <Messages>
+        <Comment.Group>
+          {directMessages.map((m) => (
+            <Comment key={`${m.id}-direct-message`}>
+              <Comment.Content>
+                <Comment.Author as="a">{m.sender.username}</Comment.Author>
+                <Comment.Metadata>
+                  <div>{m.createdAt}</div>
+                </Comment.Metadata>
+                <Comment.Text>{m.text}</Comment.Text>
+                <Comment.Actions>
+                  <Comment.Action>Reply</Comment.Action>
+                </Comment.Actions>
+              </Comment.Content>
+            </Comment>
+          ))}
+        </Comment.Group>
+      </Messages>
+    );
+  }
+}
+
+const directMessagesQuery = gql`
+  query ($teamId: Int!, $userId: Int!) {
+    directMessages(teamId: $teamId, otherUserId: $userId) {
+      id
+      sender {
+        username
+      }
+      text
+      createdAt
+    }
+  }
+`;
+
+// if error is undefined from a query call: check network tab to see if the data type being passed in is correct
+export default graphql(directMessagesQuery, {
+  options: (props) => ({
+    variables: {
+      teamId: parseInt(props.teamId, 10),
+      userId: parseInt(props.userId, 10),
+    },
+    fetchPolicy: 'network-only',
+  }),
+})(DirectMessageContainer);
