@@ -1,16 +1,26 @@
 import React from 'react';
 import _ from 'lodash';
-import decode from 'jwt-decode';
 
 import Channels from '../components/Channels';
 import Teams from '../components/Teams';
 import AddChannelModal from '../components/AddChannelModal';
 import InviteModal from '../components/InviteModal';
+import DirectMessageModal from '../components/DirectMessageModal';
 
 class Sidebar extends React.Component {
   state = {
     openAddChannelModal: false,
     openInviteModal: false,
+    openDirectMessageModal: false,
+  };
+
+  toggleDirectMessageModal = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+    this.setState((state) => ({
+      openDirectMessageModal: !state.openDirectMessageModal,
+    }));
   };
 
   toggleAddChannelModal = (e) => {
@@ -33,7 +43,8 @@ class Sidebar extends React.Component {
 
   render() {
     const { teams, team, username } = this.props;
-    const { openInviteModal, openAddChannelModal } = this.state;
+    const { openInviteModal, openAddChannelModal, openDirectMessageModal } =
+      this.state;
 
     return (
       <>
@@ -49,8 +60,15 @@ class Sidebar extends React.Component {
           ]}
           onAddChannelClick={this.toggleAddChannelModal}
           onInvitePeopleClick={this.toggleInviteModal}
+          onDirectMessageClick={this.toggleDirectMessageModal}
           isOwner={team.admin}
         />
+        <DirectMessageModal
+          teamId={team.id}
+          open={openDirectMessageModal}
+          onClose={this.toggleDirectMessageModal}
+        />
+        ,
         <AddChannelModal
           teamId={team.id}
           open={openAddChannelModal}
