@@ -10,6 +10,10 @@ export const getUserQuery = gql`
         id
         name
         admin
+        directMessageMembers {
+          id
+          username
+        }
         channels {
           id
           name
