@@ -14,7 +14,7 @@ import { getUserQuery } from '../graphql/Team';
 
 const ViewTeam = ({
   mutate,
-  data: { loading, getUser },
+  data: { loading, getUser, getUserWithNameDisplay },
   match: {
     params: { teamId, userId },
   },
@@ -22,7 +22,7 @@ const ViewTeam = ({
   if (loading) {
     return null;
   }
-
+  console.log(userId);
   const { teams, username } = getUser;
 
   if (!teams.length) {
@@ -44,7 +44,7 @@ const ViewTeam = ({
         team={currentTeam}
         username={username}
       />
-      <Header channelName="nonuser" />
+      <Header channelName={getUserWithNameDisplay.username} />
       <DirectMessageContainer teamId={teamId} userId={userId} />
       <SendMessage
         onSubmit={async (text) => {
@@ -54,6 +54,8 @@ const ViewTeam = ({
               receiverId: parseInt(userId, 10),
               teamId: parseInt(teamId, 10),
             },
+            optimisticResponse: { createDirectMessage: true },
+            refetchQueries: [{ query: getUserQuery }],
           });
           console.log(response);
         }}
@@ -71,9 +73,38 @@ const createDirectMessageMutation = gql`
   }
 `;
 
+const directMessageGetUserQuery = gql`
+  query ($userId: Int!) {
+    getUserWithNameDisplay(userId: $userId) {
+      username
+    }
+    getUser {
+      id
+      username
+
+      teams {
+        id
+        name
+        admin
+        directMessageMembers {
+          id
+          username
+        }
+        channels {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export default compose(
-  graphql(getUserQuery, {
-    options: { fetchPolicy: 'network-only' },
+  graphql(directMessageGetUserQuery, {
+    options: (props) => ({
+      variables: { userId: parseInt(props.match.params.userId, 10) },
+      fetchPolicy: 'network-only',
+    }),
   }),
   graphql(createDirectMessageMutation)
 )(ViewTeam);
