@@ -1,8 +1,8 @@
-import React from 'react';
-import { gql } from '@apollo/client';
-import { graphql } from '@apollo/client/react/hoc';
-import { Comment } from 'semantic-ui-react';
-import Messages from '../components/Messages';
+import React from "react";
+import { gql } from "@apollo/client";
+import { graphql } from "@apollo/client/react/hoc";
+import { Comment } from "semantic-ui-react";
+import Messages from "../components/Messages";
 
 const newChannelMessageSubscription = gql`
   subscription ($channelId: Int!) {
@@ -40,7 +40,7 @@ class MessageContainer extends React.Component {
   }
 
   subscribe = (channelId) => {
-    this.props.data.subscribeToMore({
+    return this.props.data.subscribeToMore({
       document: newChannelMessageSubscription,
       variables: { channelId },
       updateQuery: (prev, { subscriptionData }) => {
@@ -49,16 +49,16 @@ class MessageContainer extends React.Component {
           ...prev,
           allMessages: [
             ...prev.allMessages,
-            subscriptionData.data.newChannelMessage,
-          ],
+            subscriptionData.data.newChannelMessage
+          ]
         };
-      },
+      }
     });
   };
 
   render() {
     const {
-      data: { loading, allMessages },
+      data: { loading, allMessages }
     } = this.props;
     return loading ? null : (
       <Messages>
@@ -99,8 +99,8 @@ const allMessagesQuery = gql`
 export default graphql(allMessagesQuery, {
   options: (props) => ({
     variables: {
-      channelId: props.channelId,
+      channelId: props.channelId
     },
-    fetchPolicy: 'network-only',
-  }),
+    fetchPolicy: "network-only"
+  })
 })(MessageContainer);
