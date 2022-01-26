@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import React from "react";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const TeamWrapper = styled.div`
   grid-column: 1;
@@ -42,6 +42,11 @@ const team = ({ id, letter }) => (
 
 export default ({ teams }) => (
   <TeamWrapper>
-    <TeamList>{teams.map(team)}</TeamList>
+    <TeamList>
+      {teams.map(team)}
+      <Link key="add-team" to="/create-team">
+        <TeamListItem>+</TeamListItem>
+      </Link>
+    </TeamList>
   </TeamWrapper>
 );

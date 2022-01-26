@@ -1,11 +1,11 @@
-import React from 'react';
-import { Button, Form, Modal, Input } from 'semantic-ui-react';
-import { withFormik } from 'formik';
-import { gql } from '@apollo/client';
-import { graphql } from '@apollo/client/react/hoc';
-import { flowRight as compose } from 'lodash';
+import React from "react";
+import { Button, Form, Modal, Input } from "semantic-ui-react";
+import { withFormik } from "formik";
+import { gql } from "@apollo/client";
+import { graphql } from "@apollo/client/react/hoc";
+import { flowRight as compose } from "lodash";
 
-import normalizeErrors from '../normalizeErrors';
+import normalizeErrors from "../normalizeErrors";
 
 function InviteModal({
   open,
@@ -16,7 +16,7 @@ function InviteModal({
   handleSubmit,
   isSubmitting,
   touched,
-  errors,
+  errors
 }) {
   return (
     <Modal open={open} onClose={onClose}>
@@ -68,13 +68,13 @@ const addTeamMemberMutation = gql`
 export default compose(
   graphql(addTeamMemberMutation),
   withFormik({
-    mapPropsToValues: () => ({ email: '' }),
+    mapPropsToValues: () => ({ email: "" }),
     handleSubmit: async (
       values,
       { props: { onClose, teamId, mutate }, setSubmitting, setErrors }
     ) => {
       const response = await mutate({
-        variables: { email: values.email, teamId },
+        variables: { email: values.email, teamId }
       });
       const { success, errors } = response.data.addTeamMember;
       if (success) {
@@ -82,8 +82,19 @@ export default compose(
         setSubmitting(false);
       } else {
         setSubmitting(false);
-        setErrors(normalizeErrors(errors));
+        const errorsLength = errors.length;
+        const filteredErrors = errors.filter(
+          (e) => e.message !== "user_id must be unique"
+        );
+        console.log(filteredErrors);
+        if (errorsLength !== filteredErrors.length) {
+          filteredErrors.push({
+            path: "email",
+            message: "This user is already part of the team"
+          });
+        }
+        setErrors(normalizeErrors(filteredErrors));
       }
-    },
+    }
   })
 )(InviteModal);

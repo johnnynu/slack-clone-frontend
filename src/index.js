@@ -1,35 +1,35 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   createHttpLink,
   ApolloLink,
-  split,
-} from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
-import { getMainDefinition } from '@apollo/client/utilities';
-import { WebSocketLink } from '@apollo/client/link/ws';
+  split
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { WebSocketLink } from "@apollo/client/link/ws";
 
-import Routes from './routes';
+import Routes from "./routes";
 
-import 'semantic-ui-css/semantic.min.css';
+import "semantic-ui-css/semantic.min.css";
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
-  mode: 'no-cors',
+  uri: "http://localhost:4000/graphql",
+  mode: "no-cors"
 });
 
 const middlewareLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('token');
-  const refreshToken = localStorage.getItem('refreshToken');
+  const token = localStorage.getItem("token");
+  const refreshToken = localStorage.getItem("refreshToken");
   return {
     headers: {
       ...headers,
-      'x-token': token,
-      'x-refresh-token': refreshToken,
-    },
+      "x-token": token,
+      "x-refresh-token": refreshToken
+    }
   };
 });
 
@@ -37,18 +37,18 @@ const middlewareLink = setContext((_, { headers }) => {
 const afterwareLink = new ApolloLink((operation, forward) => {
   return forward(operation).map((response) => {
     const {
-      response: { headers },
+      response: { headers }
     } = operation.getContext();
     if (headers) {
-      const token = headers.get('x-token');
-      const refreshToken = headers.get('x-refresh-token');
+      const token = headers.get("x-token");
+      const refreshToken = headers.get("x-refresh-token");
 
       if (token) {
-        localStorage.setItem('token', token);
+        localStorage.setItem("token", token);
       }
 
       if (refreshToken) {
-        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem("refreshToken", refreshToken);
       }
     }
 
@@ -62,22 +62,22 @@ const httpLinkWithMiddleware = afterwareLink.concat(
 
 const wsLink = new WebSocketLink({
   // if future problem, add /subscriptions to end of uri
-  uri: 'ws://localhost:4000/graphql',
+  uri: "ws://localhost:4000/graphql",
   options: {
     reconnect: true,
     connectionParams: {
-      token: localStorage.getItem('token'),
-      refreshToken: localStorage.getItem('refreshToken'),
-    },
-  },
+      token: localStorage.getItem("token"),
+      refreshToken: localStorage.getItem("refreshToken")
+    }
+  }
 });
 
 const link = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
     return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
     );
   },
   wsLink,
@@ -87,9 +87,9 @@ const link = split(
 const client = new ApolloClient({
   link,
   fetchOptions: {
-    credentials: 'include',
+    credentials: "include"
   },
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache()
 });
 
 const App = (
@@ -98,4 +98,4 @@ const App = (
   </ApolloProvider>
 );
 
-ReactDOM.render(App, document.getElementById('root'));
+ReactDOM.render(App, document.getElementById("root"));

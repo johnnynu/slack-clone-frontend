@@ -1,10 +1,10 @@
-import React from 'react';
-import { Button, Form, Modal, Input } from 'semantic-ui-react';
-import { withFormik } from 'formik';
-import { gql } from '@apollo/client';
-import { graphql } from '@apollo/client/react/hoc';
-import { flowRight as compose } from 'lodash';
-import { getUserQuery } from '../graphql/Team';
+import React from "react";
+import { Button, Form, Modal, Input } from "semantic-ui-react";
+import { withFormik } from "formik";
+import { gql } from "@apollo/client";
+import { graphql } from "@apollo/client/react/hoc";
+import { flowRight as compose } from "lodash";
+import { getUserQuery } from "../graphql/Team";
 
 function AddChannelModal({
   open,
@@ -14,9 +14,16 @@ function AddChannelModal({
   handleBlur,
   handleSubmit,
   isSubmitting,
+  resetForm
 }) {
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal
+      open={open}
+      onClose={(e) => {
+        resetForm();
+        onClose(e);
+      }}
+    >
       <Modal.Header>Add Channel</Modal.Header>
       <Modal.Content>
         <Form>
@@ -33,7 +40,14 @@ function AddChannelModal({
         </Form>
       </Modal.Content>
       <Modal.Actions>
-        <Button disabled={isSubmitting} onClick={onClose} color="black">
+        <Button
+          disabled={isSubmitting}
+          onClick={(e) => {
+            resetForm();
+            onClose(e);
+          }}
+          color="black"
+        >
           Cancel
         </Button>
         <Button
@@ -64,7 +78,7 @@ const createChannelMutation = gql`
 export default compose(
   graphql(createChannelMutation),
   withFormik({
-    mapPropsToValues: () => ({ name: '' }),
+    mapPropsToValues: () => ({ name: "" }),
     handleSubmit: async (
       values,
       { props: { onClose, teamId, mutate }, setSubmitting }
@@ -73,19 +87,19 @@ export default compose(
         variables: { teamId, name: values.name },
         optimisticResponse: {
           createChannel: {
-            __typename: 'Mutation',
+            __typename: "Mutation",
             success: true,
             channel: {
-              __typename: 'Channel',
+              __typename: "Channel",
               id: -1,
-              name: values.name,
-            },
-          },
+              name: values.name
+            }
+          }
         },
-        refetchQueries: [{ query: getUserQuery }],
+        refetchQueries: [{ query: getUserQuery }]
       });
       onClose();
       setSubmitting(false);
-    },
+    }
   })
 )(AddChannelModal);

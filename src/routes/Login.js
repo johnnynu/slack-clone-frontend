@@ -1,25 +1,25 @@
-import React from 'react';
-import { observer } from 'mobx-react';
-import { extendObservable } from 'mobx';
+import React from "react";
+import { observer } from "mobx-react";
+import { extendObservable } from "mobx";
 import {
   Message,
   Form,
   Container,
   Header,
   Input,
-  Button,
-} from 'semantic-ui-react';
-import { gql } from '@apollo/client';
-import { graphql } from '@apollo/client/react/hoc';
+  Button
+} from "semantic-ui-react";
+import { gql } from "@apollo/client";
+import { graphql } from "@apollo/client/react/hoc";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
 
     extendObservable(this, {
-      email: '',
-      password: '',
-      errors: {},
+      email: "",
+      password: "",
+      errors: {}
     });
   }
 
@@ -31,14 +31,14 @@ class Login extends React.Component {
   onSubmit = async () => {
     const { email, password } = this;
     const res = await this.props.mutate({
-      variables: { email, password },
+      variables: { email, password }
     });
     const { success, token, refreshToken, errors } = res.data.login;
 
     if (success) {
-      localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', refreshToken);
-      this.props.history.push('/');
+      localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
+      this.props.history.push("/view-team");
     } else {
       const err = {};
       errors.forEach(({ path, message }) => {
@@ -54,7 +54,7 @@ class Login extends React.Component {
     const {
       email,
       password,
-      errors: { emailError, passwordError },
+      errors: { emailError, passwordError }
     } = this;
 
     const errorList = [];

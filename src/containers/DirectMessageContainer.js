@@ -62,7 +62,6 @@ class DirectMessageContainer extends React.Component {
         };
       }
     });
-    console.log(temp);
     return temp;
   };
 
